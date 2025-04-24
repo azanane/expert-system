@@ -1,5 +1,5 @@
 from argparse import ArgumentParser
-from Node import FactNode
+from FactNode import FactNode
 from RuleNode import RuleNode
 
 class Parser:
@@ -17,25 +17,22 @@ class Parser:
 
     def init_facts_and_rules_node(self):
         rules = []
-        facts = []
-        fact_to_return = None
+        facts = {}
 
         for literal in self.all_literals:
             if literal in self.initial_facts:
                 fact_node = FactNode(literal, value=True, final=True, default=False)
-                fact_to_return = fact_node
             else:
                 fact_node = FactNode(literal, value=False, final=False, default=True)
-            facts.append(fact_node)
-        
+            facts[fact_node.literal] = fact_node
+    
         for rule in self.exprs:
-            facts_in_rule = [fact for fact in facts if fact.literal in rule]
+            facts_in_rule = [fact for literal, fact in facts.items() if literal in rule]
             rule_node = RuleNode(rule, facts_in_rule)
             for fact in facts_in_rule:
                 fact.add_rule(rule_node)
             rules.append(rule_node)
-
-
+            
         return facts, rules
 
     def __get_literals(self):

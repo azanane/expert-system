@@ -1,6 +1,7 @@
 # This is a comment$
 A ^ !C => B
-C + D => E
-A => !E
+C | D => E
+B => !C
+B => D
 =
-?BCDE
+?BCDEA

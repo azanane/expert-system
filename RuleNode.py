@@ -1,4 +1,5 @@
 
+import re
 
 class RuleNode:
 
@@ -27,6 +28,7 @@ class RuleNode:
     def __side_to_expr(self, side: str):
         side = side.replace("+", " & ")
         side = side.replace("!", " not ")
+        side = re.sub(r'not\s+([A-Z-(-)]+)', r'(not \1)', side)
         side = side.replace("^", " ^ ")
         side = side.replace("|", " | ")
         return side
@@ -47,8 +49,21 @@ class RuleNode:
         return eval(self.expr, {}, assignment)
 
     def set_right_side(self):
+        facts_changed = []
+        for literal, fact in self.left_facts.items():
+            fact.final = True
         for literal, fact in self.right_facts.items():
-            fact.value = True
+            if fact.final == True and fact.value != self.get_value_to_assign(literal, self.right):
+                raise Exception(f"Might have a contradiction {self.rule}")
+            fact.value = self.get_value_to_assign(literal, self.right)
             fact.default = False
             fact.final = True
-            fact.define_valid_rules(self)   
+            facts_changed.append(fact)
+
+        for fact in facts_changed:
+            fact.define_valid_rules(self)
+
+    def get_value_to_assign(self, literal: str, expr: str):
+        if expr.find(f'(not {literal})') != -1:
+            return False
+        return True
