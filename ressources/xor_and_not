@@ -1,0 +1,6 @@
+# This is a comment$
+A ^ !C => B
+C + D => E
+A => !E
+=
+?BCDE

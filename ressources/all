@@ -1,0 +1,8 @@
+# Propositions
+!A => C
+A + B => D
+D | !C => F + E
+!F => G + H
+H => !A 
+=AB
+?ABCDEFGH
